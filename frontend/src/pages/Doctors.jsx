@@ -19,8 +19,6 @@ export default function Doctors() {
   const { specialty } = useParams(); // Extract specialty from useParams
   const { doctors } = UseAppContext();
 
-  console.log("Specialty from params:", specialty);
-
   // Filter doctors based on the specialty parameter
   const filteredDoctors = specialty
     ? doctors.filter(
@@ -64,7 +62,7 @@ export default function Doctors() {
               <Card
                 onClick={() => navigate(`/appointment/${doctor._id}`)}
                 key={index}
-                className="bg-[#EEF2FF] hover:bg-[#F3F6FF] border-2 border-[#e9ebf3] rounded-lg hover:translate-y-[-5px] transition-all duration-400 ease-in-out"
+                className="bg-[#EEF2FF] cursor-pointer hover:bg-[#F3F6FF] border-2 border-[#e9ebf3] rounded-lg hover:translate-y-[-5px] transition-all duration-400 ease-in-out"
               >
                 <CardContent className="p-0">
                   <div className="aspect-square relative mb-3 rounded-lg overflow-hidden">

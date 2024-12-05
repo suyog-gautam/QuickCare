@@ -8,9 +8,11 @@ import Contact from "./pages/Contact";
 import MyProfile from "./pages/MyProfile";
 import MyAppointment from "./pages/MyAppointment";
 import Appointment from "./pages/Appointment";
+import Error from "./pages/Error";
 import Navbar from "./components/Navbar";
 import "./App.css";
 import Footer from "./components/Footer";
+
 export default function App() {
   return (
     <div className="mx-4 sm:mx-[10%]">
@@ -24,7 +26,9 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/myprofile" element={<MyProfile />} />
         <Route path="/myappointment" element={<MyAppointment />} />
-        <Route path="/appointment:doc/Id" element={<Appointment />} />
+
+        <Route path="/appointment/:docId" element={<Appointment />} />
+        <Route path="*" element={<Error />} />
       </Routes>
       <Footer />
     </div>
