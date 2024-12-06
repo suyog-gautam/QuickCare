@@ -16,7 +16,7 @@ export default function Navbar() {
   const location = useLocation();
   let navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [token, setToken] = useState("");
+  const [token, setToken] = useState("op");
 
   const navLinks = [
     { path: "/", label: "HOME" },
@@ -85,7 +85,7 @@ export default function Navbar() {
                 <DropdownMenuItem onClick={() => navigate("/profile")}>
                   My Profile
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/appointments")}>
+                <DropdownMenuItem onClick={() => navigate("/myappointment")}>
                   My Appointments
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -140,7 +140,7 @@ export default function Navbar() {
                   variant="ghost"
                   className="w-3/4 justify-start"
                   onClick={() => {
-                    navigate("/appointments");
+                    navigate("/myappointment");
                     setIsMenuOpen(false);
                   }}
                 >

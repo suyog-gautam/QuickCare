@@ -15,7 +15,7 @@ export default function Header() {
             </h1>
             <div className="flex items-center gap-4">
               <div className="flex -space-x-2">
-                <div className="h-9 w-27">
+                <div className="h-9 w-27 hidden lg:block md:block">
                   <img
                     src={assets.group_profiles}
                     className="w-full h-full object-cover"
