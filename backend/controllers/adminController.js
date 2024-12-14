@@ -13,7 +13,7 @@ const addDoctor = async (req, res) => {
       speciality,
       degree,
       experience,
-      available,
+
       fees,
       address,
       about,
@@ -48,6 +48,7 @@ const addDoctor = async (req, res) => {
 
     const imageUpload = await cloudinary.uploader.upload(imageFile.path, {
       resource_type: "image",
+      folder: "Quickcare/doctorImage", // Specify the folder name
     });
     const imageUrl = imageUpload.secure_url;
 
@@ -103,7 +104,17 @@ const loginAdmin = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+const allDoctors = async (req, res) => {
+  try {
+    const doctors = await doctorModel.find({}).select("-password");
+    res.json({ success: true, doctors });
+  } catch (error) {
+    console.error("Error occurred:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
 module.exports = {
   addDoctor,
   loginAdmin,
+  allDoctors,
 };

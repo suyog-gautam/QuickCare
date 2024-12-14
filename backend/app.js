@@ -7,8 +7,10 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var cors = require("cors");
 var indexRouter = require("./routes/index");
-var usersRouter = require("./routes/users");
+var usersRouter = require("./routes/userRoute");
 var adminRouter = require("./routes/adminRoute");
+var doctorRouter = require("./routes/doctorRoute");
+var userRouter = require("./routes/userRoute");
 var app = express();
 connectDB();
 connectCloudinary();
@@ -25,7 +27,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/api/admin", adminRouter);
-
+app.use("/api/doctor", doctorRouter);
+app.use("/api/user", userRouter);
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
