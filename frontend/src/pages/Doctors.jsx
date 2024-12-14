@@ -74,8 +74,20 @@ export default function Doctors() {
                   </div>
                   <div className="bg-white p-4 rounded-r-lg rounded-l-lg">
                     <div className="flex items-center gap-1 mb-2">
-                      <Circle className="w-3 h-3 fill-green-500 text-green-500" />
-                      <span className="text-green-500 text-xs">Available</span>
+                      <Circle
+                        className={`w-3 h-3 ${
+                          doctor.available
+                            ? "fill-green-500 text-green-500"
+                            : "fill-red-600 text-red-600"
+                        }`}
+                      />
+                      <span
+                        className={`text-xs ${
+                          doctor.available ? "text-green-500" : "text-red-600"
+                        }`}
+                      >
+                        {doctor.available ? "Available" : "Unavailable"}
+                      </span>
                     </div>
                     <h3 className="font-semibold text-gray-900 text-md mb-1">
                       {doctor.name}

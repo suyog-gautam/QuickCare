@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,18 +25,21 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import axios from "axios";
+import { UseAppContext } from "@/context/AppContext";
+import { set } from "date-fns";
 
-// Improved schema with additional validation rules
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z
     .string()
-    .min(6, { message: "Password must be at least 6 characters long" })
+    .min(6, { message: "Password must be at least 8 characters long" })
     .regex(/[a-zA-Z0-9]/, { message: "Password must be alphanumeric" }),
 });
 
 export default function Login() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { backendUrl, token, setToken } = UseAppContext();
   let navigate = useNavigate();
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -47,9 +50,25 @@ export default function Login() {
   });
 
   async function onSubmit(values) {
-    console.log(values);
+    try {
+      const { data } = await axios.post(`${backendUrl}/api/user/login`, values);
+      if (data.success) {
+        toast.success(data.message);
+        localStorage.setItem("token", data.token);
+        setToken(data.token);
+        navigate("/profile");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   }
-
+  useEffect(() => {
+    if (token) {
+      navigate("/");
+    }
+  }, [token]);
   return (
     <div className="login-container flex flex-col min-h-[80vh] h-full w-full items-center justify-center px-4">
       <Card className="mx-auto max-w-sm ">

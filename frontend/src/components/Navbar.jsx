@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
@@ -11,12 +11,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ChevronDown } from "lucide-react";
-
+import { UseAppContext } from "@/context/AppContext";
+import { use } from "react";
 export default function Navbar() {
   const location = useLocation();
   let navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [token, setToken] = useState("op");
+  const { token, setToken } = UseAppContext(false);
+  useEffect(() => {
+    if (token) {
+      localStorage.setItem("token", token);
+    } else {
+      localStorage.removeItem("token");
+    }
+  }, [token]);
 
   const navLinks = [
     { path: "/", label: "HOME" },
@@ -27,7 +35,8 @@ export default function Navbar() {
 
   const handleLogout = () => {
     setToken(null);
-    navigate("/");
+    navigate("/login");
+    localStorage.removeItem("token");
   };
 
   return (
