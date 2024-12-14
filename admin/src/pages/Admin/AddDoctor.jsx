@@ -96,7 +96,8 @@ export function AddDoctor() {
         );
       }
     } catch (error) {
-      toast.error(error.message || "Failed to add doctor. Please try again.");
+      toast.error("Failed to add doctor. Please try again.");
+      console.error("Error:", error.response?.data || error.message);
     } finally {
       setIsLoading(false);
     }
@@ -181,11 +182,11 @@ export function AddDoctor() {
                     <SelectItem value="general physician">
                       General physician
                     </SelectItem>
-                    <SelectItem value="gynecologist">Gynecologist</SelectItem>
-                    <SelectItem value="cardiology">Cardiology</SelectItem>
-                    <SelectItem value="dermatology">Dermatology</SelectItem>
-                    <SelectItem value="neurology">Neurology</SelectItem>
-                    <SelectItem value="orthopedics">Orthopedics</SelectItem>
+                    <SelectItem value="Gynecologist">Gynecologist</SelectItem>
+                    <SelectItem value="Cardiology">Cardiology</SelectItem>
+                    <SelectItem value="Dermatology">Dermatology</SelectItem>
+                    <SelectItem value="Neurology">Neurology</SelectItem>
+                    <SelectItem value="Orthopedics">Orthopedics</SelectItem>
                   </SelectContent>
                 </Select>
                 {errors.speciality && (
