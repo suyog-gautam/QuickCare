@@ -13,5 +13,15 @@ userRouter.post(
   authUser,
   userController.updateProfile
 );
-
+userRouter.post("/book-appointment", authUser, userController.bookAppointment);
+userRouter.get(
+  "/appointment-list",
+  authUser,
+  userController.getUserAppointment
+);
+userRouter.post(
+  "/cancel-appointment",
+  authUser,
+  userController.cancelAppointment
+);
 module.exports = userRouter;
