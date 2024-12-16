@@ -8,41 +8,18 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ChevronRight } from "lucide-react";
-
-const appointments = [
-  {
-    id: 1,
-    doctor: "Dr. Richard James",
-    date: "24th July, 2024",
-    avatar: "/placeholder.svg",
-  },
-  {
-    id: 2,
-    doctor: "Dr. Richard James",
-    date: "24th July, 2024",
-    avatar: "/placeholder.svg",
-  },
-  {
-    id: 3,
-    doctor: "Dr. Richard James",
-    date: "24th July, 2024",
-    avatar: "/placeholder.svg",
-  },
-  {
-    id: 4,
-    doctor: "Dr. Richard James",
-    date: "24th July, 2024",
-    avatar: "/placeholder.svg",
-  },
-  {
-    id: 5,
-    doctor: "Dr. Richard James",
-    date: "24th July, 2024",
-    avatar: "/placeholder.svg",
-  },
-];
-
+import { UseAdminContext } from "../context/AdminContext";
+import { parse, format } from "date-fns";
+import { useEffect } from "react";
 export function AppointmentList() {
+  const { doctors, appointments, getAllAppointments, aToken, fetchDoctors } =
+    UseAdminContext();
+  useEffect(() => {
+    if (aToken) {
+      getAllAppointments();
+      fetchDoctors();
+    }
+  }, [aToken]);
   return (
     <Card>
       <CardHeader>
@@ -52,25 +29,29 @@ export function AppointmentList() {
         </CardDescription>
       </CardHeader>
       <CardContent className="grid gap-6">
-        {appointments.map((appointment) => (
+        {appointments.slice(0, 10).map((appointment) => (
           <div
-            key={appointment.id}
+            key={appointment._id}
             className="flex items-center justify-between space-x-4"
           >
             <div className="flex items-center space-x-4">
               <Avatar>
                 <AvatarImage
-                  src={appointment.avatar}
-                  alt={appointment.doctor}
+                  src={appointment.docData.image}
+                  alt={appointment.docData.name}
                 />
-                <AvatarFallback>RJ</AvatarFallback>
               </Avatar>
               <div>
                 <p className="text-sm font-medium leading-none">
-                  {appointment.doctor}
+                  {appointment.docData.name}
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  Booking on {appointment.date}
+                  Booking on{" "}
+                  {format(
+                    parse(appointment.slotDate, "d_M_yyyy", new Date()),
+                    "MMMM d, yyyy"
+                  )}{" "}
+                  {appointment.slotTime}
                 </p>
               </div>
             </div>

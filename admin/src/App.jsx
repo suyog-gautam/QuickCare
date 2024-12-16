@@ -11,7 +11,7 @@ import { MobileSidebar } from "./components/MobileSidebar";
 import { AllAppointment } from "./pages/Admin/AllAppointment";
 import { AddDoctor } from "./pages/Admin/AddDoctor";
 import { DoctorList } from "./pages/Admin/DoctorList";
-
+import { SingleAppointment } from "./pages/Admin/SingleAppoinment";
 export default function App() {
   const { aToken } = UseAdminContext();
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -45,6 +45,10 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/appointments" element={<AllAppointment />} />
+                <Route
+                  path="/appointments/:id"
+                  element={<SingleAppointment />}
+                />
                 <Route path="/add-doctor" element={<AddDoctor />} />
                 <Route path="/doctor-list" element={<DoctorList />} />
               </Routes>

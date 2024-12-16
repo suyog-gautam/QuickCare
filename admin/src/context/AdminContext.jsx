@@ -1,6 +1,7 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+
 const AdminContext = createContext();
 
 const AdminContextProvider = (props) => {
@@ -8,6 +9,7 @@ const AdminContextProvider = (props) => {
     localStorage.getItem("aToken") ? localStorage.getItem("aToken") : ""
   );
   const [doctors, setDoctors] = useState([]);
+  const [appointments, setAppointments] = useState([]);
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const fetchDoctors = async () => {
@@ -25,7 +27,6 @@ const AdminContextProvider = (props) => {
       // Access response.data
       if (response.data.success) {
         setDoctors(response.data.doctors); // Correct path to doctors
-        console.log(response.data.doctors);
       } else {
         console.error("Failed to fetch doctors:", response.data.message);
       }
@@ -61,6 +62,27 @@ const AdminContextProvider = (props) => {
       console.error("Error in changeAvailibility:", error);
     }
   };
+  const getAllAppointments = async () => {
+    try {
+      const { data } = await axios.get(
+        `${backendUrl}/api/admin/appointmentAdmin`,
+
+        {
+          headers: {
+            aToken,
+          },
+        }
+      );
+      if (data.success) {
+        setAppointments(data.appointements);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+      console.error(error);
+    }
+  };
 
   const value = {
     aToken,
@@ -69,6 +91,10 @@ const AdminContextProvider = (props) => {
     doctors,
     fetchDoctors,
     changeAvailibility,
+    getAllAppointments,
+    appointments,
+
+    setAppointments,
   };
   return (
     <AdminContext.Provider value={value}>
