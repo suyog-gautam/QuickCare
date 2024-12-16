@@ -17,7 +17,7 @@ export default function Navbar() {
   const location = useLocation();
   let navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { token, setToken } = UseAppContext(false);
+  const { token, setToken, userData } = UseAppContext();
   useEffect(() => {
     if (token) {
       localStorage.setItem("token", token);
@@ -81,11 +81,11 @@ export default function Navbar() {
 
         {/* Desktop create account button or user menu */}
         <div className="hidden md:flex items-center space-x-4">
-          {token ? (
+          {token && userData ? (
             <DropdownMenu>
               <DropdownMenuTrigger className="flex items-center space-x-2 focus:outline-none">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src="/placeholder.svg" />
+                  <AvatarImage src={userData.image} />
                   <AvatarFallback>U</AvatarFallback>
                 </Avatar>
                 <ChevronDown className="h-4 w-4 text-gray-500" />

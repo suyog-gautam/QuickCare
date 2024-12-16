@@ -1,7 +1,6 @@
 import { useContext, createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
-import { use } from "react";
 
 const AppContext = createContext();
 
@@ -61,6 +60,7 @@ export const AppProvider = ({ children }) => {
     userData,
     setUserData,
     getUserData,
+    getDoctorsData,
   };
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 };

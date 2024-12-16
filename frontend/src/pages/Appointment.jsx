@@ -4,16 +4,18 @@ import { CheckCircle2, Clock, DollarSign, Calendar } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { UseAppContext } from "@/context/AppContext";
 import { useNavigate } from "react-router-dom";
-
+import axios from "axios";
+import { toast } from "sonner";
 import Error from "./Error";
 import RelatedDoctor from "@/components/RelatedDoctor";
-
+import { Loader } from "@/components/Loader";
 export default function DoctorProfile() {
-  const { doctors } = UseAppContext(); // Assuming doctors are available in AppContext
+  const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedTime, setSelectedTime] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { docId } = useParams(); // Get the doctor ID from the URL
-
+  const { doctors, getDoctorsData, token, backendUrl } = UseAppContext();
   // Find the doctor with the matching ID
   const doctor = doctors.find((doc) => doc._id === docId);
 
@@ -52,13 +54,63 @@ export default function DoctorProfile() {
 
     const slotDate = setMinutes(setHours(currentDate, hours), minutes);
 
-    // Include time slots only if they are in the future or for later days
+    // Check if the slot is already booked
+    const formattedSlotDate =
+      selectedDate.getDate() +
+      "_" +
+      (selectedDate.getMonth() + 1) +
+      "_" +
+      selectedDate.getFullYear();
+    const bookedSlotsForDate = doctor?.slots_booked[formattedSlotDate] || []; // Get booked slots for the selected date
+
     return (
-      selectedDate.toDateString() !== currentDate.toDateString() ||
-      !isBefore(slotDate, currentDate)
+      (selectedDate.toDateString() !== currentDate.toDateString() ||
+        !isBefore(slotDate, currentDate)) && // Include future slots
+      !bookedSlotsForDate.includes(slot) // Exclude already booked slots
     );
   });
 
+  const bookAppointment = async () => {
+    if (!token) {
+      toast.warning("Please login to book an appointment");
+      return navigate("/login");
+    }
+
+    if (!selectedDate || !selectedTime) {
+      toast.warning("Please select a date and time");
+      return;
+    }
+    let month = selectedDate.getMonth() + 1;
+    let slotDate =
+      selectedDate.getDate() + "_" + month + "_" + selectedDate.getFullYear();
+
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/user/book-appointment`,
+        {
+          docId: docId,
+          slotDate: slotDate,
+          slotTime: selectedTime,
+        },
+        {
+          headers: {
+            token,
+          },
+        }
+      );
+      if (data.success) {
+        toast.success(data.message);
+        getDoctorsData();
+        navigate("/myappointment");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   if (!doctor) {
     // If no doctor is found, show an error or redirect
     return <Error />;
@@ -66,6 +118,7 @@ export default function DoctorProfile() {
 
   return (
     <div className="max-w-6xl mx-auto p-8">
+      {isLoading && <Loader loaderText="Booking Appointment..." />}
       <div className="bg-white rounded-3xl shadow-xl overflow-hidden my-6">
         <div className="md:flex">
           {/* Left Column */}
@@ -89,15 +142,15 @@ export default function DoctorProfile() {
             <div className="space-y-4">
               <div className="flex items-center">
                 <Calendar className="w-5 h-5 mr-3" />
-                <span>{doctor.experience} Experience</span>
+                <span>{doctor.experience} Years Experience</span>
               </div>
               <div className="flex items-center">
                 <Clock className="w-5 h-5 mr-3" />
                 <span>Available Mon-Fri</span>
               </div>
               <div className="flex items-center">
-                <DollarSign className="w-5 h-5 mr-3" />
-                <span>Appointment fee: ${doctor.fees}</span>
+                <span className="font-medium text-xl ml-1 mr-4">रु</span>
+                <span>Appointment fee: रु {doctor.fees}</span>
               </div>
             </div>
           </div>
@@ -173,7 +226,10 @@ export default function DoctorProfile() {
               </div>
             </div>
 
-            <button className="w-full bg-[#5f6fff] text-white py-4 px-8 rounded-full text-lg font-medium hover:bg-[#5f6fff]/90 transition-colors duration-200">
+            <button
+              onClick={bookAppointment}
+              className="w-full bg-[#5f6fff] text-white py-4 px-8 rounded-full text-lg font-medium hover:bg-[#5f6fff]/90 transition-colors duration-200"
+            >
               Book Appointment
             </button>
           </div>
