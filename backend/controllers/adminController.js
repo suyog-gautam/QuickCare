@@ -1,6 +1,7 @@
 const doctorModel = require("../models/doctorModel");
 const validator = require("validator");
 const cloudinary = require("cloudinary").v2;
+var appointmentModel = require("../models/appointmentModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 require("dotenv").config();
@@ -113,8 +114,34 @@ const allDoctors = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+const appointmentAdmin = async (req, res) => {
+  try {
+    const appointements = await appointmentModel
+      .find({})
+      .sort({ createdAt: -1 });
+    res.json({ success: true, appointements });
+  } catch (error) {
+    console.error("Error occurred:", error);
+    res.json({ success: false, message: error.message });
+  }
+};
+const getAppointmentById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const appointment = await appointmentModel.findById(id);
+    if (!appointment) {
+      return res.json({ success: false, message: "Appointment not found" });
+    }
+    res.json({ success: true, appointment });
+  } catch (error) {
+    console.error("Error occurred:", error);
+    res.json({ success: false, message: error.message });
+  }
+};
 module.exports = {
   addDoctor,
   loginAdmin,
   allDoctors,
+  appointmentAdmin,
+  getAppointmentById,
 };

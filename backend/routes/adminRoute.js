@@ -4,6 +4,7 @@ var upload = require("../middleware/multer");
 var authAdmin = require("../middleware/authAdmin");
 var adminController = require("../controllers/adminController");
 var doctorController = require("../controllers/doctorController");
+
 adminRouter.post(
   "/add-doctor",
   authAdmin,
@@ -16,6 +17,16 @@ adminRouter.post(
   "/doctor-availability",
   authAdmin,
   doctorController.changeaAvailability
+);
+adminRouter.get(
+  "/appointmentAdmin",
+  authAdmin,
+  adminController.appointmentAdmin
+);
+adminRouter.get(
+  "/getAppointmentById/:id",
+  authAdmin,
+  adminController.getAppointmentById
 );
 
 module.exports = adminRouter;
