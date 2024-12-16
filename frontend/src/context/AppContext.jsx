@@ -9,6 +9,7 @@ export const AppProvider = ({ children }) => {
   const backendUrl = import.meta.env.VITE_BACKEND_URL;
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [userData, setUserData] = useState("");
+
   //get doctors data
   const getDoctorsData = async () => {
     try {
