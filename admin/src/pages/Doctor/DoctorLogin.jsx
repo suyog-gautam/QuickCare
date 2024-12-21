@@ -25,8 +25,10 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
+import { UseDoctorContext } from "@/context/DoctorContext";
+import { UseAdminContext } from "@/context/AdminContext";
+import axios from "axios";
 
-// Improved schema with additional validation rules
 const formSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
   password: z
@@ -37,6 +39,8 @@ const formSchema = z.object({
 
 export default function DoctorLogin() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { backendUrl } = UseAdminContext();
+  const { dToken, setDToken } = UseDoctorContext();
   let navigate = useNavigate();
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -47,7 +51,27 @@ export default function DoctorLogin() {
   });
 
   async function onSubmit(values) {
-    console.log(values);
+    try {
+      const { data } = await axios.post(
+        `${backendUrl}/api/doctor/login`,
+        values
+      );
+
+      if (!data.success) {
+        toast.error(data.message);
+        return;
+      }
+
+      if (data.success) {
+        localStorage.setItem("dToken", data.token);
+        toast.success("Login Successful");
+        setDToken(data.token);
+        navigate("/doctor-dashboard");
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+      console.log(error);
+    }
   }
 
   return (

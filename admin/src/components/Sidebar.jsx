@@ -10,11 +10,16 @@ import {
   LogOut,
 } from "lucide-react";
 import { UseAdminContext } from "@/context/AdminContext";
-
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { UseDoctorContext } from "@/context/DoctorContext";
 export function Sidebar({ className }) {
   const location = useLocation();
-  const { aToken } = UseAdminContext();
-  const items = [
+  const navigate = useNavigate();
+  const { aToken, setAToken } = UseAdminContext();
+  const { dToken, setDToken } = UseDoctorContext();
+
+  const adminItems = [
     {
       title: "Dashboard",
       href: "/",
@@ -37,6 +42,31 @@ export function Sidebar({ className }) {
     },
   ];
 
+  const doctorItems = [
+    {
+      title: "Dashboard",
+      href: "/doctor-dashboard",
+      icon: LayoutDashboard,
+    },
+    {
+      title: "My Appointments",
+      href: "/doctor-appointments",
+      icon: CalendarDays,
+    },
+    {
+      title: "Profile",
+      href: "/doctor-profile",
+      icon: Users,
+    },
+  ];
+
+  const items = aToken ? adminItems : dToken ? doctorItems : [];
+  const handleLogout = () => {
+    setAToken(null);
+    localStorage.removeItem("aToken");
+    navigate("/login");
+    toast.success("Logged out successfully");
+  };
   return (
     <div className={cn("w-64 bg-white border-r flex-shrink-0", className)}>
       <div className="flex flex-col h-full">
@@ -67,6 +97,7 @@ export function Sidebar({ className }) {
           <Button
             variant="ghost"
             className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-100"
+            onClick={() => handleLogout()}
           >
             <LogOut className="mr-2 h-4 w-4" />
             Logout

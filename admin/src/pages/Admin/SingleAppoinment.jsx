@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { format, parse } from "date-fns";
 import {
   CalendarIcon,
   ClockIcon,
@@ -36,10 +37,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Separator } from "@/components/ui/separator";
+import { Loader } from "@/components/Loader";
 export const SingleAppointment = () => {
   const { id } = useParams();
   const { aToken, backendUrl } = UseAdminContext();
   const [appointment, setAppointment] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   const getAppointment = async () => {
     try {
       const { data } = await axios.get(
@@ -82,11 +85,32 @@ export const SingleAppointment = () => {
     isCompleted,
   } = appointment;
   const handleCancelAppointment = async () => {
-    console.log("Cancelling appointment...");
+    try {
+      setIsLoading(true);
+      const { data } = await axios.post(
+        `${backendUrl}/api/admin/cancelAppointment`,
+        { id },
+        {
+          headers: { aToken },
+        }
+      );
+      if (data.success) {
+        toast.success(data.message);
+        getAppointment(); // Refresh appointment data
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error("Failed to cancel appointment.");
+      console.error("Error canceling appointment:", error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
   return (
     userData && (
       <div className="container mx-auto py-10">
+        {isLoading && <Loader />}
         <h1 className="text-3xl font-bold mb-6">Appointment Details</h1>
         <div className="grid gap-6 md:grid-cols-2">
           <Card>
@@ -185,7 +209,11 @@ export const SingleAppointment = () => {
               <div className="grid gap-4 md:grid-cols-2">
                 <div className="space-y-2">
                   <p className="flex items-center">
-                    <CalendarIcon className="mr-2 h-4 w-4" /> Date: {slotDate}
+                    <CalendarIcon className="mr-2 h-4 w-4" /> Date:{" "}
+                    {format(
+                      parse(appointment.slotDate, "d_M_yyyy", new Date()),
+                      "MMMM d, yyyy"
+                    )}
                   </p>
                   <p className="flex items-center">
                     <ClockIcon className="mr-2 h-4 w-4" /> Time: {slotTime}
@@ -227,33 +255,35 @@ export const SingleAppointment = () => {
                 </div>
               </div>
               <Separator className="my-6" />
-              <div className="flex justify-end">
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="destructive"
-                      disabled={cancelled || isCompleted}
-                    >
-                      Cancel Appointment
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This action cannot be undone. This will permanently
-                        cancel the appointment.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={handleCancelAppointment}>
-                        Confirm Cancellation
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
+              {!cancelled && !isCompleted && (
+                <div className="flex justify-end">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="destructive"
+                        disabled={cancelled || isCompleted}
+                      >
+                        Cancel Appointment
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          cancel the appointment.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={handleCancelAppointment}>
+                          Confirm Cancellation
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

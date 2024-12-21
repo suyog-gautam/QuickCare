@@ -12,14 +12,19 @@ import { AllAppointment } from "./pages/Admin/AllAppointment";
 import { AddDoctor } from "./pages/Admin/AddDoctor";
 import { DoctorList } from "./pages/Admin/DoctorList";
 import { SingleAppointment } from "./pages/Admin/SingleAppoinment";
+import { UseDoctorContext } from "./context/DoctorContext";
+import { DoctorDashboard } from "./pages/Doctor/DoctorDashboard";
+import { DoctorAppointment } from "./pages/Doctor/DoctorAppointment";
+import { DoctorProfile } from "./pages/Doctor/DoctorProfile";
 export default function App() {
   const { aToken } = UseAdminContext();
+  const { dToken } = UseDoctorContext();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="flex h-screen overflow-hidden">
       <Toaster position="top-center" richColors />
-      {aToken ? (
+      {aToken || dToken ? (
         <>
           {/* Desktop Sidebar */}
           <Sidebar className="hidden lg:flex" />
@@ -51,6 +56,12 @@ export default function App() {
                 />
                 <Route path="/add-doctor" element={<AddDoctor />} />
                 <Route path="/doctor-list" element={<DoctorList />} />
+                <Route path="/doctor-dashboard" element={<DoctorDashboard />} />
+                <Route
+                  path="/doctor-appointments"
+                  element={<DoctorAppointment />}
+                />
+                <Route path="/doctor-profile" element={<DoctorProfile />} />
               </Routes>
             </main>
           </div>
