@@ -138,10 +138,61 @@ const getAppointmentById = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+const cancelAppointment = async (req, res) => {
+  try {
+    const { id } = req.body;
+    console.log(id);
+    // Find the appointment
+    const appointmentData = await appointmentModel.findById(id);
+    if (!appointmentData) {
+      console.error("Appointment not found for ID:", id);
+      return res.json({ success: false, message: "Appointment not found" });
+    }
+
+    // Mark the appointment as cancelled
+    await appointmentModel.findByIdAndUpdate(id, {
+      cancelled: true,
+    });
+
+    // Remove the slot from doctor's `slots_booked`
+    const { docId, slotDate, slotTime } = appointmentData;
+    const doctorData = await doctorModel.findById(docId);
+    if (!doctorData) {
+      return res.json({ success: false, message: "Doctor not found" });
+    }
+
+    // Check if the slotDate exists
+    if (doctorData.slots_booked[slotDate]) {
+      const index = doctorData.slots_booked[slotDate].indexOf(slotTime);
+      if (index > -1) {
+        doctorData.slots_booked[slotDate].splice(index, 1); // Remove the slotTime
+      }
+
+      // If no slots remain for the slotDate, delete the date entirely
+      if (doctorData.slots_booked[slotDate].length === 0) {
+        delete doctorData.slots_booked[slotDate];
+      }
+
+      // Update the doctor's slots_booked field in the database
+      await doctorModel.findByIdAndUpdate(docId, {
+        slots_booked: doctorData.slots_booked,
+      });
+    }
+
+    res.json({
+      success: true,
+      message: "Appointment cancelled successfully",
+    });
+  } catch (error) {
+    console.error("Error in cancelAppointment:", error);
+    res.json({ success: false, message: error.message });
+  }
+};
 module.exports = {
   addDoctor,
   loginAdmin,
   allDoctors,
   appointmentAdmin,
   getAppointmentById,
+  cancelAppointment,
 };

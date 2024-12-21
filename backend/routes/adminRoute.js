@@ -28,5 +28,9 @@ adminRouter.get(
   authAdmin,
   adminController.getAppointmentById
 );
-
+adminRouter.post(
+  "/cancelAppointment",
+  authAdmin,
+  adminController.cancelAppointment
+);
 module.exports = adminRouter;
