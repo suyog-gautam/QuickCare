@@ -8,6 +8,7 @@ import {
   Plus,
   Users,
   LogOut,
+  Lock,
 } from "lucide-react";
 import { UseAdminContext } from "@/context/AdminContext";
 import { useNavigate } from "react-router-dom";
@@ -58,12 +59,18 @@ export function Sidebar({ className }) {
       href: "/doctor-profile",
       icon: Users,
     },
+    {
+      title: "Change Password",
+      href: "/doctor-change-password",
+      icon: Lock,
+    },
   ];
 
   const items = aToken ? adminItems : dToken ? doctorItems : [];
   const handleLogout = () => {
     setAToken(null);
     localStorage.removeItem("aToken");
+    localStorage.removeItem("dToken");
     navigate("/login");
     toast.success("Logged out successfully");
   };

@@ -28,4 +28,9 @@ doctorRouter.post(
   upload.single("image"),
   doctorController.updateProfile
 );
+doctorRouter.post(
+  "/changePassword",
+  authDoctor,
+  doctorController.changePassword
+);
 module.exports = doctorRouter;

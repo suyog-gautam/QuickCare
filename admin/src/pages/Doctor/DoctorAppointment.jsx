@@ -144,7 +144,7 @@ export const DoctorAppointment = () => {
                       <span
                         className={`px-2 py-1 rounded-full text-xs font-semibold ${
                           appointment.payment
-                            ? "bg-red-100 text-green-800"
+                            ? "bg-green-100 text-green-800"
                             : "bg-blue-100 text-blue-800"
                         }`}
                       >

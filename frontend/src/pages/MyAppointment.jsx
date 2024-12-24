@@ -4,15 +4,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, Clock, MapPin } from "lucide-react";
-import { parse, format } from "date-fns";
+import { parse, format, set } from "date-fns";
 import { UseAppContext } from "@/context/AppContext";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "sonner";
+import { v4 as uuidv4 } from "uuid";
+import { Loader } from "@/components/Loader";
 
 export default function MyAppointment() {
-  const { doctors, token, backendUrl, getDoctorsData } = UseAppContext();
-
+  const { token, backendUrl, getDoctorsData } = UseAppContext();
+  const [loading, setLoading] = useState(false);
   const [appointments, setAppointments] = useState([]);
 
   const getUserAppointment = async () => {
@@ -66,12 +68,37 @@ export default function MyAppointment() {
     }
   };
 
-  const handlePayment = (appointmentId) => {
-    console.log("Processing payment for:", appointmentId);
+  const handlePayment = async (appointmentId, amount) => {
+    try {
+      setLoading(true);
+      const response = await axios.post(
+        `${backendUrl}/api/user/initiate-payment`,
+        {
+          amount,
+          productId: uuidv4(),
+          appointmentId,
+        },
+        {
+          headers: {
+            token,
+          },
+        }
+      );
+      if (response.data.success) {
+        window.location.href = response.data.url;
+        getUserAppointment();
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="container mx-auto p-4 max-w-4xl my-5 ">
+      {loading && <Loader loaderText="Processing Payment..." />}
       <h1 className="text-2xl font-bold mb-6">My Appointments</h1>
       <div className="space-y-4 mt-4">
         {appointments.map((appointment) => (
@@ -125,7 +152,9 @@ export default function MyAppointment() {
                       {!appointment.payment && (
                         <Button
                           className="w-40 bg-[#5f6fff] hover:bg-[#4b5cff]"
-                          onClick={() => handlePayment(appointment.id)}
+                          onClick={() =>
+                            handlePayment(appointment._id, appointment.amount)
+                          }
                         >
                           Pay here
                         </Button>

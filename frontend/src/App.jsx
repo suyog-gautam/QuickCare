@@ -14,6 +14,8 @@ import Navbar from "./components/Navbar";
 import "./App.css";
 import Footer from "./components/Footer";
 import { Toaster } from "sonner";
+import SuccesssPayment from "./pages/SuccessPayment";
+import FailurePayment from "./pages/FailurePayment";
 export default function App() {
   return (
     <div className="mx-4 sm:mx-[10%]">
@@ -29,6 +31,8 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/profile" element={<MyProfile />} />
         <Route path="/myappointment" element={<MyAppointment />} />
+        <Route path="/success-payment" element={<SuccesssPayment />} />
+        <Route path="/failure-payment" element={<FailurePayment />} />
 
         <Route path="/appointment/:docId" element={<Appointment />} />
         <Route path="*" element={<Error />} />

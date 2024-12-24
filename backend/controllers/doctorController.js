@@ -217,6 +217,39 @@ const updateProfile = async (req, res) => {
     res.json({ success: false, message: error.message });
   }
 };
+const changePassword = async (req, res) => {
+  try {
+    const { doctorId, oldpassword, newpassword } = req.body;
+    if (!doctorId) {
+      return res.json({ success: false, message: "Doctor ID is required" });
+    }
+    if (!oldpassword) {
+      return res.json({ success: false, message: "Old password is required" });
+    }
+    if (!newpassword) {
+      return res.json({ success: false, message: "New password is required" });
+    }
+    const doctor = await doctorModel.findById(doctorId);
+    if (!doctor) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Doctor not found" });
+    }
+
+    const isMatch = await bcrypt.compare(oldpassword, doctor.password);
+    if (!isMatch) {
+      return res.json({ success: false, message: "Invalid old password" });
+    }
+    const hashedPassword = await bcrypt.hash(newpassword, 10);
+    await doctorModel.findByIdAndUpdate(doctorId, {
+      password: hashedPassword,
+    });
+    res.json({ success: true, message: "Password changed successfully" });
+  } catch (error) {
+    console.error("Error occurred:", error);
+    res.json({ success: false, message: error.message });
+  }
+};
 
 module.exports = {
   changeaAvailability,
@@ -227,4 +260,5 @@ module.exports = {
   completeAppointment,
   getDoctorDetails,
   updateProfile,
+  changePassword,
 };

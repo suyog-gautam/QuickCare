@@ -1,5 +1,6 @@
 var express = require("express");
 var userRouter = express.Router();
+var PaymentController = require("../controllers/PaymentController");
 const userController = require("../controllers/userController");
 const authUser = require("../middleware/authUser");
 var upload = require("../middleware/multer");
@@ -23,5 +24,10 @@ userRouter.post(
   "/cancel-appointment",
   authUser,
   userController.cancelAppointment
+);
+userRouter.post(
+  "/initiate-payment",
+  authUser,
+  PaymentController.initiatePayment
 );
 module.exports = userRouter;

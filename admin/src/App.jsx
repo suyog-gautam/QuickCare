@@ -16,6 +16,7 @@ import { UseDoctorContext } from "./context/DoctorContext";
 import { DoctorDashboard } from "./pages/Doctor/DoctorDashboard";
 import { DoctorAppointment } from "./pages/Doctor/DoctorAppointment";
 import { DoctorProfile } from "./pages/Doctor/DoctorProfile";
+import { ChangePassword } from "./pages/Doctor/ChangePassword";
 export default function App() {
   const { aToken } = UseAdminContext();
   const { dToken } = UseDoctorContext();
@@ -62,6 +63,10 @@ export default function App() {
                   element={<DoctorAppointment />}
                 />
                 <Route path="/doctor-profile" element={<DoctorProfile />} />
+                <Route
+                  path="/doctor-change-password"
+                  element={<ChangePassword />}
+                />
               </Routes>
             </main>
           </div>

@@ -38,8 +38,7 @@ const profileSchema = z.object({
     .refine((value) => value !== "Not Selected", {
       message: "Please select a gender",
     }),
-  dob: z.string().min(1, "Birthday is required"),
-  dob: z.string().date("Birthday is required"),
+  dob: z.string().min(1, "Birthday is required").date("Birthday is required"),
 });
 
 export default function MyProfile() {
