@@ -151,12 +151,13 @@ export default function MyAppointment() {
                     <div>
                       {!appointment.payment && (
                         <Button
-                          className="w-40 bg-[#5f6fff] hover:bg-[#4b5cff]"
+                          className="w-40 bg-white hover:bg-[#f7f6f6] rounded-lg text-[#62b04c] border-2 border-gray-500 hover:border-gray-700"
                           onClick={() =>
                             handlePayment(appointment._id, appointment.amount)
                           }
                         >
-                          Pay here
+                          <img src="./esewa.png" className="w-6 h-6 t" alt="" />{" "}
+                          Pay With Esewa
                         </Button>
                       )}
                       {appointment.payment && (

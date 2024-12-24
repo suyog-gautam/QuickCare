@@ -12,7 +12,7 @@ const DoctorContextProvider = (props) => {
 
   const [appointments, setAppointments] = useState([]);
   const [doctorData, setDoctorData] = useState(false);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl = "https://quickcare-backend.onrender.com";
   const getAllAppointments = async () => {
     try {
       const { data } = await axios.get(

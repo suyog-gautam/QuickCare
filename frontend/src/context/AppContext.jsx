@@ -6,7 +6,7 @@ const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
   const [doctors, setDoctors] = useState([]);
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl = "https://quickcare-backend.onrender.com";
   const [token, setToken] = useState(localStorage.getItem("token") || "");
   const [userData, setUserData] = useState("");
 
