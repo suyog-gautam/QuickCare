@@ -10,7 +10,7 @@ const AdminContextProvider = (props) => {
   );
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
-  const backendUrl = "https://quickcare-backend.onrender.com";
+  const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
   const fetchDoctors = async () => {
     try {
